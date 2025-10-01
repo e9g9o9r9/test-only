@@ -1,0 +1,147 @@
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+
+.wrapper::before {
+  content: '';
+  position: fixed;
+  top: 45%;
+  left: 64px;
+  width: calc(100% - 128px);
+  height: 1px;
+  background-color: black;
+  transform: translateY(-50%);
+  z-index: 10;
+  opacity: 0.1;
+}
+
+.wrapper::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100vh;
+  background-color: black;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 0.1;
+}
+
+.wrapper .left-border,
+.wrapper .right-border {
+  position: fixed;
+  top: 0;
+  width: 1px;
+  height: 100vh;
+  background-color: black;
+  z-index: 1;
+  opacity: 0.1;
+}
+
+.wrapper .left-border {
+  left: 64px;
+}
+
+.wrapper .right-border {
+  right: 64px;
+}
+
+.wrapper .circle-center {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  width: 530px;
+  height: 530px;
+  border: 2px solid black;
+  border-radius: 50%;
+  background-color: transparent;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  opacity: 0.1;
+}
+
+.circle-dots {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-5%, -5%);
+  z-index: 11;
+  width: 530px;
+  height: 530px;
+}
+
+.circle-dot {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid rgba(48, 62, 88, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  color: #42567A;
+
+  &:hover {
+    border-color: #42567A;
+    box-shadow: 0 0 10px rgba(66, 86, 122, 0.3);
+  }
+}
+
+.circle-dot:nth-child(1) {
+  transform: rotate(0deg) translate(265px) rotate(0deg);
+}
+
+.circle-dot:nth-child(2) {
+  transform: rotate(60deg) translate(265px) rotate(-60deg);
+}
+
+.circle-dot:nth-child(3) {
+  transform: rotate(120deg) translate(265px) rotate(-120deg);
+}
+
+.circle-dot:nth-child(4) {
+  transform: rotate(180deg) translate(265px) rotate(-180deg);
+}
+
+.circle-dot:nth-child(5) {
+  transform: rotate(240deg) translate(265px) rotate(-240deg);
+}
+
+.circle-dot:nth-child(6) {
+  transform: rotate(300deg) translate(265px) rotate(-300deg);
+}
+
+.content {
+  padding: 0 20px;
+  margin: 0 64px;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  width: calc(100% - 128px);
+}
+
+.title {
+  position: absolute;
+  top: 170px;
+  font-weight: bold;
+  font-size: 56px;
+  max-width: 353px;
+  color: #42567A;
+  margin-left: 78px;
+}
+
+.carousel {
+  position: absolute;
+  bottom: 104px;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  padding: 30px 0;
+  padding: 0 80px;
+}

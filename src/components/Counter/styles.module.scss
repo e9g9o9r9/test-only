@@ -1,0 +1,23 @@
+.wrapper {
+    display: flex;
+    gap: 14px;
+    flex-direction: column;
+    margin-bottom: 56px;
+}
+
+.buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #42567A;
+    background: none;
+}
+
+.counter {
+    color: #42567A;
+}
