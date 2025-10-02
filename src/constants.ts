@@ -21,6 +21,11 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
                 year: 2016,
                 description: "Запуск Tesla Model 3 - самого доступного электромобиля",
                 category: "technology"
+            },
+            {
+                year: 2015,
+                description: "Релиз Oculus Rift CV1 - начало эры потребительских VR-шлемов",
+                category: "technology"
             }
         ]
     },
@@ -43,6 +48,11 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
             {
                 year: 2018,
                 description: "Создание первых генетически модифицированных детей в Китае",
+                category: "science"
+            },
+            {
+                year: 2017,
+                description: "Успешное клонирование макак-крабоедов в Китае",
                 category: "science"
             }
         ]
@@ -67,6 +77,11 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
                 year: 2020,
                 description: "Президентские выборы в США",
                 category: "politics"
+            },
+            {
+                year: 2019,
+                description: "Протесты в Гонконге против закона об экстрадиции",
+                category: "politics"
             }
         ]
     },
@@ -89,6 +104,11 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
             {
                 year: 2022,
                 description: "Мировая премьера сериала 'Игра в кальмара'",
+                category: "culture"
+            },
+            {
+                year: 2021,
+                description: "Выставка Бэнкси 'Game Changer' в поддержку медработников",
                 category: "culture"
             }
         ]
@@ -113,6 +133,11 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
                 year: 2023,
                 description: "Новак Джокович выиграл Открытый чемпионат Австралии",
                 category: "sports"
+            },
+            {
+                year: 2024,
+                description: "Лионель Месси получает восьмой 'Золотой мяч'",
+                category: "sports"
             }
         ]
     },
@@ -136,8 +161,12 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
                 year: 2025,
                 description: "Миссия Dragonfly к спутнику Сатурна Титану",
                 category: "science"
+            },
+            {
+                year: 2026,
+                description: "Запуск миссии Europa Clipper для изучения спутника Юпитера",
+                category: "science"
             }
         ]
     }
 ];
-
