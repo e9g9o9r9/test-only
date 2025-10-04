@@ -11,3 +11,9 @@ export interface TimePeriod {
     endYear: number;
     events: HistoricalEvent[];
 }
+
+export interface Event {
+    year: number;
+    description: string;
+    category: string;
+}

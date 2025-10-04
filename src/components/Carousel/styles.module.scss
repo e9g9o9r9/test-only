@@ -1,0 +1,26 @@
+.carouselContainer {
+    display: flex;
+    align-items: center;
+    animation: fadeInUp 0.8s ease forwards;
+
+    .year {
+        color: #3877EE;
+    }
+
+    .description {
+        color: #42567A
+    }
+}
+
+.navButton {
+    width: 65px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 0 15px 10px rgba(0, 0, 0, 0.03);
+
+    &:first-child {
+        margin-right: 80px;
+    }
+}

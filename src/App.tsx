@@ -10,56 +10,71 @@ import { TimePeriod } from "./types/types";
 const App: React.FC = () => {
   const dotsData: TimePeriod[] = HISTORICAL_PERIODS;
   const circleRef = useRef<HTMLDivElement>(null);
-  const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const numbersRef = useRef<(HTMLDivElement | null)[]>([]);
+  const nameRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeDot, setActiveDot] = useState<number>(0);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [hoveredDot, setHoveredDot] = useState<number | null>(null);
+
+  const currentPeriod = HISTORICAL_PERIODS[activeDot];
+
+  const anglesRef = useRef<number[]>([]);
 
   useEffect(() => {
+    const totalDots = dotsData.length;
+    anglesRef.current = dotsData.map((_, index) => (index * 360) / totalDots);
     updateDotsPosition();
   }, []);
 
   const updateDotsPosition = (targetIndex: number = activeDot): void => {
     const totalDots: number = dotsData.length;
-    const radius: number = 265; // Радиус круга
+    const radius: number = 265;
 
-    dotsRef.current.forEach((dot, index) => {
-      if (!dot) return;
+    const dots = document.querySelectorAll('.circle-dot');
 
-      // Вычисляем угол для каждой точки
-      const angle: number = ((index - targetIndex) * 360) / totalDots;
-      const radian: number = (angle * Math.PI) / 180;
+    dots.forEach((dot, index) => {
+      const targetAngle: number = ((index - targetIndex) * 360) / totalDots - 60;
 
-      const x: number = Math.cos(radian) * radius;
-      const y: number = Math.sin(radian) * radius;
+      const currentAngle = anglesRef.current[index];
 
-      // Определяем opacity в зависимости от состояния
-      let opacity: number;
-      if (isHovered) {
-        // При наведении показываем только активную точку
-        opacity = index === targetIndex ? 1 : 0.2;
-      } else {
-        // Без наведения показываем активную и остальные с пониженной прозрачностью
-        opacity = index === targetIndex ? 1 : 0.2;
-      }
+      let angleDiff = targetAngle - currentAngle;
+      if (angleDiff > 180) angleDiff -= 360;
+      if (angleDiff < -180) angleDiff += 360;
 
-      // Анимация перемещения
+      const timeline = gsap.timeline();
+
+      timeline.to(dot, {
+        duration: 1,
+        rotation: -targetAngle,
+        ease: "power2.out",
+        onUpdate: function () {
+          const progress = this.progress();
+          const currentAngleProgress = currentAngle + angleDiff * progress;
+          const currentRadian = (currentAngleProgress * Math.PI) / 180;
+
+          const x = Math.cos(currentRadian) * radius;
+          const y = Math.sin(currentRadian) * radius;
+
+          gsap.set(dot, {
+            x: x,
+            y: y
+          });
+        },
+        onComplete: function () {
+          anglesRef.current[index] = targetAngle;
+        }
+      });
+
       gsap.to(dot, {
         duration: 0.5,
-        x: x,
-        y: y,
-        rotation: -angle,
         scale: index === targetIndex ? 1.2 : 1,
-        opacity: opacity,
         ease: "power2.out",
       });
 
-      // Анимация для текста (названия периода)
-      const nameElement: HTMLElement | null = dot.querySelector(".circle-name");
+      const nameElement = nameRef.current[index];
       if (nameElement) {
         gsap.to(nameElement, {
-          duration: 0.8,
-          opacity: index === targetIndex ? 1 : 0,
-          x: index === targetIndex ? 80 : 0,
+          duration: 1,
+          rotation: targetAngle,
           ease: "power2.out",
         });
       }
@@ -71,18 +86,28 @@ const App: React.FC = () => {
     updateDotsPosition(index);
   };
 
-  const handleCircleMouseEnter = (): void => {
-    setIsHovered(true);
-    updateDotsPosition();
+  const handleCircleMouseEnter = (index: number): void => {
+    setHoveredDot(index);
   };
 
   const handleCircleMouseLeave = (): void => {
-    setIsHovered(false);
-    updateDotsPosition();
+    setHoveredDot(null);
   };
 
-  const setDotRef = (index: number) => (el: HTMLDivElement | null) => {
-    dotsRef.current[index] = el;
+  const nextPeriod = (): void => {
+    const nextIndex = (activeDot + 1) % dotsData.length;
+    setActiveDot(nextIndex);
+    updateDotsPosition(nextIndex);
+  };
+
+  const prevPeriod = (): void => {
+    const prevIndex = (activeDot - 1 + dotsData.length) % dotsData.length;
+    setActiveDot(prevIndex);
+    updateDotsPosition(prevIndex);
+  };
+
+  const setNameRef = (index: number) => (el: HTMLDivElement | null) => {
+    nameRef.current[index] = el;
   };
 
   return (
@@ -92,34 +117,50 @@ const App: React.FC = () => {
       <div className="circle-center"></div>
 
       <div className="circle-dots" ref={circleRef}>
-        {dotsData.map((data: TimePeriod, index: number) => (
-          <div
-            key={data.id}
-            ref={setDotRef(index)}
-            className={`circle-dot ${
-              index === activeDot ? "active" : "circle-dot-black"
-            }`}
-            onClick={() => handleDotClick(index)}
-            onMouseEnter={handleCircleMouseEnter}
-            onMouseLeave={handleCircleMouseLeave}
-          >
-            {activeDot === index && (
-              <div>
-                <span className="circle-name">{data.name}</span>
-                {<div>{index + 1}</div>}
+        {dotsData.map((data: TimePeriod, index: number) => {
+          return (
+            <div
+              key={data.id}
+              className={`circle-dot ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
+              onClick={() => handleDotClick(index)}
+              onMouseEnter={() => handleCircleMouseEnter(index)}
+              onMouseLeave={handleCircleMouseLeave}
+            >
+              <div className="circle-content" ref={setNameRef(index)}>
+                {activeDot === index && (
+                  <span
+                    className="circle-name"
+
+                  >
+                    {data.name}
+                  </span>
+                )}
+                {(hoveredDot === index || activeDot === index) && (
+                  <div className="circle-number">
+                    {index + 1}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
 
       <div className="content">
         <span className="title">Исторические даты</span>
         <div className="title-line"></div>
-        <Interval fromYear="2015" toYear="2022" />
+        <Interval
+          fromYear={currentPeriod.startYear.toString()}
+          toYear={currentPeriod.endYear.toString()}
+        />
         <div className="carousel">
-          <Counter />
-          <Carousel />
+          <Counter
+            currentPeriod={(activeDot + 1).toString().padStart(2, '0')}
+            allPeriods={dotsData.length.toString().padStart(2, '0')}
+            onNext={nextPeriod}
+            onPrev={prevPeriod}
+          />
+          <Carousel events={currentPeriod.events} />
         </div>
       </div>
     </div>
