@@ -1,7 +1,7 @@
 $mobile: 480px;
 
 .wrapper {
-    position: fixed;
+    position: absolute;
     top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -15,6 +15,7 @@ $mobile: 480px;
         color: black;
         background-color: white;
         border-radius: 4px;
+        user-select: none;
 
         @media(max-width: 1100px) {
             font-size: 120px;

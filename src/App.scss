@@ -6,7 +6,7 @@ $mobile: 480px;
 
   &::before {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 45%;
     left: 64px;
     width: calc(100% - 128px);
@@ -19,7 +19,7 @@ $mobile: 480px;
 
   &::after {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 50%;
     width: 1px;
@@ -32,7 +32,7 @@ $mobile: 480px;
 
   .left-border,
   .right-border {
-    position: fixed;
+    position: absolute;
     top: 0;
     width: 1px;
     height: 100vh;
@@ -50,7 +50,7 @@ $mobile: 480px;
   }
 
   .circle-center {
-    position: fixed;
+    position: absolute;
     top: 45%;
     left: 50%;
     width: 530px;
@@ -95,7 +95,7 @@ $mobile: 480px;
 }
 
 .circle-dots {
-  position: fixed;
+  position: absolute;
   top: 45%;
   left: 50%;
   transform: translate(-5%, -5%);
@@ -149,6 +149,7 @@ $mobile: 480px;
   max-width: 353px;
   color: #42567A;
   margin-left: 78px;
+  z-index: 1;
 
 
   @media(max-width: 1100px) {
@@ -251,4 +252,8 @@ $mobile: 480px;
     font-weight: bold;
     color: #42567A;
   }
+}
+
+.delayed-appear {
+  transition: 3s;
 }

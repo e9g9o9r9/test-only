@@ -3,28 +3,37 @@ import Carousel from "./components/Carousel/Carousel";
 import Counter from "./components/Counter/Counter";
 import Interval from "./components/Interval/Interval";
 import { HISTORICAL_PERIODS } from "./constants";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { TimePeriod } from "./types/types";
 import { useScreenWidth } from "./hooks/useScreenWidth";
 
-const App: React.FC = () => {
+let timelineInstanceCounter = 0;
+
+const App: React.FC<{ id?: string }> = ({ id }) => {
+  const componentId = id || `timeline-${timelineInstanceCounter++}`;
   const dotsData: TimePeriod[] = HISTORICAL_PERIODS;
   const circleRef = useRef<HTMLDivElement>(null);
-  const numbersRef = useRef<(HTMLDivElement | null)[]>([]);
   const nameRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeDot, setActiveDot] = useState<number>(0);
   const [hoveredDot, setHoveredDot] = useState<number | null>(null);
-  const [currentCategory, setCurrentCategory] = useState<string | null>('')
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
-  console.log(currentCategory, "currentCategory000");
+  useLayoutEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1000);
 
+    return () => {
+      clearTimeout(timer)
+      setIsVisible(false)
+    };
+  }, [activeDot]);
 
-  const screenWidth = useScreenWidth()
-  const isMobile = screenWidth < 480
+  const screenWidth = useScreenWidth();
+  const isMobile = screenWidth < 480;
 
   const currentPeriod = HISTORICAL_PERIODS[activeDot];
-
   const anglesRef = useRef<number[]>([]);
 
   useEffect(() => {
@@ -37,7 +46,7 @@ const App: React.FC = () => {
     const totalDots: number = dotsData.length;
     const radius: number = 265;
 
-    const dots = document.querySelectorAll('.circle-dot');
+    const dots = document.querySelectorAll(`.circle-dot-${componentId}`);
 
     dots.forEach((dot, index) => {
       const targetAngle: number = ((index - targetIndex) * 360) / totalDots - 60;
@@ -81,7 +90,6 @@ const App: React.FC = () => {
       const nameElement = nameRef.current[index];
       if (nameElement) {
         gsap.to(nameElement, {
-          duration: 1,
           rotation: targetAngle,
           ease: "power2.out",
         });
@@ -120,84 +128,82 @@ const App: React.FC = () => {
 
   return (
     <>
-    <div className="wrapper">
-      <div className="left-border"></div>
-      <div className="right-border"></div>
-      <div className="circle-center"></div>
+      <div className="wrapper" data-timeline-id={componentId}>
+        <div className="left-border"></div>
+        <div className="right-border"></div>
+        <div className="circle-center"></div>
 
-      {!isMobile ? (
-        <div className="circle-dots" ref={circleRef}>
-          {dotsData.map((data: TimePeriod, index: number) => {
-            return (
-              <div
-                key={data.id}
-                className={`circle-dot ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
-                onClick={() => {
-                  handleDotClick(index)
-                }}
-                onMouseEnter={() => handleCircleMouseEnter(index)}
-                onMouseLeave={handleCircleMouseLeave}
-              >
-                <div className="circle-content" ref={setNameRef(index)}>
-                  {activeDot === index && (
-                    <span
-                      className="circle-name"
-                    >
-                      {data.name}
-                    </span>
-                  )}
-                  {(hoveredDot === index || activeDot === index) && (
-                    <div className="circle-number">
-                      {index + 1}
-                    </div>
-                  )}
+        {!isMobile && (
+          <div className="circle-dots" ref={circleRef}>
+            {dotsData.map((data: TimePeriod, index: number) => {
+              return (
+                <div
+                  key={data.id}
+                  className={`circle-dot circle-dot-${componentId} ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
+                  onClick={() => {
+                    handleDotClick(index)
+                  }}
+                  onMouseEnter={() => handleCircleMouseEnter(index)}
+                  onMouseLeave={handleCircleMouseLeave}
+                >
+                  <div className="circle-content" ref={setNameRef(index)}>
+                    {(activeDot === index && isVisible) && (
+                      <span
+                        className="circle-name delayed-appear"
+                      >
+                        {data.name}
+                      </span>
+                    )}
+                    {(hoveredDot === index || activeDot === index) && (
+                      <div className="circle-number">
+                        {index + 1}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (<></>
-      )}
+              );
+            })}
+          </div>
+        )}
 
-      <div className="content">
-        <span className="title">Исторические даты</span>
-        <div className="title-line"></div>
-        <Interval
-          fromYear={currentPeriod.startYear.toString()}
-          toYear={currentPeriod.endYear.toString()}
-        />
-        {isMobile &&
-          <div className="period">
-            <span>{currentPeriod.name}</span>
-            <div className="mobile-line"></div>
-          </div>}
-        <div className="carousel">
-          <Counter
-            currentPeriod={(activeDot + 1).toString().padStart(2, '0')}
-            allPeriods={dotsData.length.toString().padStart(2, '0')}
-            onNext={nextPeriod}
-            onPrev={prevPeriod}
+
+        <div className="content">
+          <span className="title">Исторические даты</span>
+          <div className="title-line"></div>
+          <Interval
+            fromYear={currentPeriod.startYear.toString()}
+            toYear={currentPeriod.endYear.toString()}
           />
-          {isMobile && <div className="mobile-dots">
-            {dotsData.map((data: TimePeriod, index: number) => (
-              <button
-                key={data.id}
-                className={`mobile-dot ${index === activeDot ? "mobile-dot-active" : ""}`}
-                onClick={() => {
-                  console.log(data.name);
+          {isMobile &&
+            <div className="period">
+              <span>{currentPeriod.name}</span>
+              <div className="mobile-line"></div>
+            </div>}
+          <div className="carousel">
+            <Counter
+              currentPeriod={(activeDot + 1).toString().padStart(2, '0')}
+              allPeriods={dotsData.length.toString().padStart(2, '0')}
+              onNext={nextPeriod}
+              onPrev={prevPeriod}
+            />
+            {isMobile && <div className="mobile-dots">
+              {dotsData.map((data: TimePeriod, index: number) => (
+                <button
+                  key={data.id}
+                  className={`mobile-dot ${index === activeDot ? "mobile-dot-active" : ""}`}
+                  onClick={() => {
+                    console.log(data.name);
 
-                  handleDotClick(index)
-                  setCurrentCategory(data.name)
-                }
-                }
-                aria-label={`Перейти к периоду ${index + 1}`}
-              />
-            ))}
-          </div>}
-          <Carousel events={currentPeriod.events} />
+                    handleDotClick(index)
+                  }
+                  }
+                />
+              ))}
+            </div>}
+            <Carousel events={currentPeriod.events} />
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
