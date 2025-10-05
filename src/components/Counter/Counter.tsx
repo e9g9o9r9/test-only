@@ -1,3 +1,4 @@
+import { useScreenWidth } from "../../hooks/useScreenWidth";
 import styles from "./styles.module.scss"
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const Counter = ({ currentPeriod, allPeriods, onNext, onPrev }: Props) => {
+
     const current = parseInt(currentPeriod);
     const total = parseInt(allPeriods);
 
@@ -23,14 +25,14 @@ const Counter = ({ currentPeriod, allPeriods, onNext, onPrev }: Props) => {
                     onClick={onPrev}
                     disabled={isPrevDisabled}
                 >
-                    <img src="./arrowLeft.svg" alt="Previous" />
+                    <img src="./arrowLeft.svg" alt="Previous" className={styles.arrow} />
                 </button>
                 <button
                     className={`${styles.button} ${isNextDisabled ? styles.disabled : ''}`}
                     onClick={onNext}
                     disabled={isNextDisabled}
                 >
-                    <img src="./arrowRight.svg" alt="Next" />
+                    <img src="./arrowRight.svg" alt="Next" className={styles.arrow} />
                 </button>
             </div>
         </div>

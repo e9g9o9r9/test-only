@@ -1,3 +1,5 @@
+$mobile: 480px;
+
 .wrapper {
   position: relative;
   min-height: 100vh;
@@ -60,6 +62,22 @@
     z-index: 10;
     opacity: 0.1;
   }
+
+  @media (max-width: $mobile) {
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    .left-border,
+    .right-border,
+    .circle-center {
+      display: none;
+    }
+
+    padding: 20px;
+  }
 }
 
 .title-line {
@@ -70,6 +88,10 @@
   height: 118px;
   background: linear-gradient(#3877EE, #EF5DA8);
   z-index: 1;
+
+  @media(max-width: $mobile) {
+    display: none;
+  }
 }
 
 .circle-dots {
@@ -99,6 +121,7 @@
   &:hover {
     border-color: #42567A;
     box-shadow: 0 0 10px rgba(66, 86, 122, 0.3);
+    transition: all 0.3s ease
   }
 }
 
@@ -109,6 +132,13 @@
   z-index: 1;
   min-height: 100vh;
   width: calc(100% - 128px);
+
+  @media(max-width: $mobile) {
+    margin: 0;
+    position: static;
+    width: 100%;
+    padding: 0;
+  }
 }
 
 .title {
@@ -119,6 +149,19 @@
   max-width: 353px;
   color: #42567A;
   margin-left: 78px;
+
+
+  @media(max-width: 1100px) {
+    font-size: 36px;
+    margin-left: 56px;
+  }
+
+  @media(max-width: $mobile) {
+    position: static;
+    font-size: 20px;
+    margin: 59px 0 0 20px;
+    margin: 0;
+  }
 }
 
 .carousel {
@@ -127,8 +170,15 @@
   left: 0;
   right: 0;
   z-index: 12;
-  padding: 30px 0;
   padding: 0 80px;
+  margin-top: 20px;
+
+  @media(max-width: $mobile) {
+    position: static;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0;
+  }
 }
 
 .circle-name {
@@ -144,4 +194,61 @@
   height: 10px;
   margin-top: 20px;
   margin-left: 20px
+}
+
+.mobile-line {
+  width: 100%;
+  height: 1px;
+  background-color: #C7CDD9;
+  margin-top: 57px;
+}
+
+.mobile-dots {
+  position: absolute;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.mobile-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+
+  &:hover {
+    background-color: #999;
+  }
+}
+
+.mobile-dot-active {
+  background-color: #000;
+  transform: scale(1.2);
+}
+
+@media (max-width: 360px) {
+  .mobile-dots {
+    gap: 6px;
+  }
+
+  .mobile-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+.period {
+  span {
+    position: relative;
+    top: 40px;
+    font-weight: bold;
+    color: #42567A;
+  }
 }

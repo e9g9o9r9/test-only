@@ -25,9 +25,24 @@
             opacity: 0.5;
             border-color: #ccc;
         }
+
+        @media(max-width: 480px) {
+            width: 25px;
+            height: 25px;
+
+            .arrow {
+                width: 10px;
+                height: 10px;
+            }
+        }
     }
 
     .counter {
         color: #42567A;
+    }
+
+    @media(max-width: 480px) {
+        margin-top: 78px;
+        margin-bottom: 0;
     }
 }

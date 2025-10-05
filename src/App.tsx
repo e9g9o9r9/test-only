@@ -6,6 +6,7 @@ import { HISTORICAL_PERIODS } from "./constants";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { TimePeriod } from "./types/types";
+import { useScreenWidth } from "./hooks/useScreenWidth";
 
 const App: React.FC = () => {
   const dotsData: TimePeriod[] = HISTORICAL_PERIODS;
@@ -14,6 +15,13 @@ const App: React.FC = () => {
   const nameRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeDot, setActiveDot] = useState<number>(0);
   const [hoveredDot, setHoveredDot] = useState<number | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<string | null>('')
+
+  console.log(currentCategory, "currentCategory000");
+
+
+  const screenWidth = useScreenWidth()
+  const isMobile = screenWidth < 480
 
   const currentPeriod = HISTORICAL_PERIODS[activeDot];
 
@@ -23,7 +31,7 @@ const App: React.FC = () => {
     const totalDots = dotsData.length;
     anglesRef.current = dotsData.map((_, index) => (index * 360) / totalDots);
     updateDotsPosition();
-  }, []);
+  }, [isMobile]);
 
   const updateDotsPosition = (targetIndex: number = activeDot): void => {
     const totalDots: number = dotsData.length;
@@ -111,40 +119,45 @@ const App: React.FC = () => {
   };
 
   return (
+    <>
     <div className="wrapper">
       <div className="left-border"></div>
       <div className="right-border"></div>
       <div className="circle-center"></div>
 
-      <div className="circle-dots" ref={circleRef}>
-        {dotsData.map((data: TimePeriod, index: number) => {
-          return (
-            <div
-              key={data.id}
-              className={`circle-dot ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
-              onClick={() => handleDotClick(index)}
-              onMouseEnter={() => handleCircleMouseEnter(index)}
-              onMouseLeave={handleCircleMouseLeave}
-            >
-              <div className="circle-content" ref={setNameRef(index)}>
-                {activeDot === index && (
-                  <span
-                    className="circle-name"
-
-                  >
-                    {data.name}
-                  </span>
-                )}
-                {(hoveredDot === index || activeDot === index) && (
-                  <div className="circle-number">
-                    {index + 1}
-                  </div>
-                )}
+      {!isMobile ? (
+        <div className="circle-dots" ref={circleRef}>
+          {dotsData.map((data: TimePeriod, index: number) => {
+            return (
+              <div
+                key={data.id}
+                className={`circle-dot ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
+                onClick={() => {
+                  handleDotClick(index)
+                }}
+                onMouseEnter={() => handleCircleMouseEnter(index)}
+                onMouseLeave={handleCircleMouseLeave}
+              >
+                <div className="circle-content" ref={setNameRef(index)}>
+                  {activeDot === index && (
+                    <span
+                      className="circle-name"
+                    >
+                      {data.name}
+                    </span>
+                  )}
+                  {(hoveredDot === index || activeDot === index) && (
+                    <div className="circle-number">
+                      {index + 1}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (<></>
+      )}
 
       <div className="content">
         <span className="title">Исторические даты</span>
@@ -153,6 +166,11 @@ const App: React.FC = () => {
           fromYear={currentPeriod.startYear.toString()}
           toYear={currentPeriod.endYear.toString()}
         />
+        {isMobile &&
+          <div className="period">
+            <span>{currentPeriod.name}</span>
+            <div className="mobile-line"></div>
+          </div>}
         <div className="carousel">
           <Counter
             currentPeriod={(activeDot + 1).toString().padStart(2, '0')}
@@ -160,10 +178,27 @@ const App: React.FC = () => {
             onNext={nextPeriod}
             onPrev={prevPeriod}
           />
+          {isMobile && <div className="mobile-dots">
+            {dotsData.map((data: TimePeriod, index: number) => (
+              <button
+                key={data.id}
+                className={`mobile-dot ${index === activeDot ? "mobile-dot-active" : ""}`}
+                onClick={() => {
+                  console.log(data.name);
+
+                  handleDotClick(index)
+                  setCurrentCategory(data.name)
+                }
+                }
+                aria-label={`Перейти к периоду ${index + 1}`}
+              />
+            ))}
+          </div>}
           <Carousel events={currentPeriod.events} />
         </div>
       </div>
     </div>
+    </>
   );
 };
 
