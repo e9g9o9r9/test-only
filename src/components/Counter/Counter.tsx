@@ -1,4 +1,3 @@
-import { useScreenWidth } from "../../hooks/useScreenWidth";
 import styles from "./styles.module.scss"
 
 interface Props {

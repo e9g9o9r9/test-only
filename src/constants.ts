@@ -98,11 +98,6 @@ export const HISTORICAL_PERIODS: TimePeriod[] = [
             },
             {
                 year: 2022,
-                description: "Война России против Украины и культурный бойкот",
-                category: "culture"
-            },
-            {
-                year: 2022,
                 description: "Мировая премьера сериала 'Игра в кальмара'",
                 category: "culture"
             },

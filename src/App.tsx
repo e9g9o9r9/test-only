@@ -14,7 +14,7 @@ const App: React.FC<{ id?: string }> = ({ id }) => {
   const componentId = id || `timeline-${timelineInstanceCounter++}`;
   const dotsData: TimePeriod[] = HISTORICAL_PERIODS;
   const circleRef = useRef<HTMLDivElement>(null);
-  const nameRef = useRef<(HTMLDivElement | null)[]>([]);
+  const contentRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeDot, setActiveDot] = useState<number>(0);
   const [hoveredDot, setHoveredDot] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -41,6 +41,29 @@ const App: React.FC<{ id?: string }> = ({ id }) => {
     anglesRef.current = dotsData.map((_, index) => (index * 360) / totalDots);
     updateDotsPosition();
   }, [isMobile]);
+
+  useEffect(() => {
+    if (isVisible && activeDot !== null) {
+      const nameElement = contentRef.current[activeDot];
+      if (nameElement) {
+        const circleNameElement = nameElement.querySelector('.circle-name') as HTMLElement;
+        if (circleNameElement) {
+          gsap.fromTo(circleNameElement,
+            {
+              opacity: 0,
+              x: -20
+            },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.8,
+              ease: "power2.out"
+            }
+          );
+        }
+      }
+    }
+  }, [isVisible, activeDot]);
 
   const updateDotsPosition = (targetIndex: number = activeDot): void => {
     const totalDots: number = dotsData.length;
@@ -87,7 +110,7 @@ const App: React.FC<{ id?: string }> = ({ id }) => {
         ease: "power2.out",
       });
 
-      const nameElement = nameRef.current[index];
+      const nameElement = contentRef.current[index];
       if (nameElement) {
         gsap.to(nameElement, {
           rotation: targetAngle,
@@ -122,8 +145,8 @@ const App: React.FC<{ id?: string }> = ({ id }) => {
     updateDotsPosition(prevIndex);
   };
 
-  const setNameRef = (index: number) => (el: HTMLDivElement | null) => {
-    nameRef.current[index] = el;
+  const setContentRef = (index: number) => (el: HTMLDivElement | null) => {
+    contentRef.current[index] = el;
   };
 
   return (
@@ -135,34 +158,32 @@ const App: React.FC<{ id?: string }> = ({ id }) => {
 
         {!isMobile && (
           <div className="circle-dots" ref={circleRef}>
-            {dotsData.map((data: TimePeriod, index: number) => {
-              return (
-                <div
-                  key={data.id}
-                  className={`circle-dot circle-dot-${componentId} ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
-                  onClick={() => {
-                    handleDotClick(index)
-                  }}
-                  onMouseEnter={() => handleCircleMouseEnter(index)}
-                  onMouseLeave={handleCircleMouseLeave}
-                >
-                  <div className="circle-content" ref={setNameRef(index)}>
-                    {(activeDot === index && isVisible) && (
-                      <span
-                        className="circle-name delayed-appear"
-                      >
-                        {data.name}
-                      </span>
-                    )}
-                    {(hoveredDot === index || activeDot === index) && (
-                      <div className="circle-number">
-                        {index + 1}
-                      </div>
-                    )}
-                  </div>
+            {dotsData.map((data: TimePeriod, index: number) => (
+              <div
+                key={data.id}
+                className={`circle-dot circle-dot-${componentId} ${index === activeDot || hoveredDot === index ? "active" : "circle-dot-black"}`}
+                onClick={() => {
+                  handleDotClick(index)
+                }}
+                onMouseEnter={() => handleCircleMouseEnter(index)}
+                onMouseLeave={handleCircleMouseLeave}
+              >
+                <div className="circle-content" ref={setContentRef(index)}>
+                  {(activeDot === index && isVisible) && (
+                    <span
+                      className="circle-name"
+                    >
+                      {data.name}
+                    </span>
+                  )}
+                  {(hoveredDot === index || activeDot === index) && (
+                    <div className="circle-number">
+                      {index + 1}
+                    </div>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
 

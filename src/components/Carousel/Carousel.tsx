@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useRef, useState, useEffect } from 'react';
+import { Swiper as SwiperType } from 'swiper/types';
 import 'swiper/css';
 import { Event } from '../../types/types';
 import styles from './styles.module.scss';
@@ -10,7 +11,7 @@ interface Props {
 }
 
 const Carousel = ({ events }: Props) => {
-    const swiperRef = useRef<any>(null);
+    const swiperRef = useRef<SwiperType | null>(null);
     const [isVisible, setIsVisible] = useState(true);
     const [currentEvents, setCurrentEvents] = useState<Event[]>(events);
 
@@ -28,13 +29,13 @@ const Carousel = ({ events }: Props) => {
         return () => clearTimeout(timer);
     }, [events]);
 
-    const goToStart = () => {
+    const goToStart = (): void => {
         if (swiperRef.current) {
             swiperRef.current.slideTo(0);
         }
     };
 
-    const goToEnd = () => {
+    const goToEnd = (): void => {
         if (swiperRef.current) {
             swiperRef.current.slideTo(currentEvents.length - 1);
         }
@@ -57,7 +58,7 @@ const Carousel = ({ events }: Props) => {
             <Swiper
                 spaceBetween={50}
                 slidesPerView={isMobile ? 2 : 3}
-                onSwiper={(swiper: any) => {
+                onSwiper={(swiper: SwiperType) => {
                     swiperRef.current = swiper;
                 }}
                 className={styles.carousel}

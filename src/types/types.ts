@@ -1,7 +1,7 @@
 export interface HistoricalEvent {
     year: number;
     description: string;
-    category: 'technology' | 'science' | 'politics' | 'culture' | 'sports';
+    category: string;
 }
 
 export interface TimePeriod {
